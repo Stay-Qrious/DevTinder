@@ -10,10 +10,6 @@
   },
   "author": "Abhishek Tripathi",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Stay-Qrious/CodeBlind/issues"
-  },
-  "homepage": "https://github.com/Stay-Qrious/CodeBlind#readme",
   "dependencies": {
     "express": "^5.1.0"
   }
