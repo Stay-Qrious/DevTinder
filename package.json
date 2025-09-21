@@ -1,12 +1,24 @@
 {
-  "name": "namaste-node",
+  "name": "devtinder",
   "version": "1.0.0",
-  "main": "app.js",
+  "description": "Fun Project",
+  "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Stay-Qrious/CodeBlind.git"
+  },
+  "author": "Abhishek Tripathi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Stay-Qrious/CodeBlind/issues"
+  },
+  "homepage": "https://github.com/Stay-Qrious/CodeBlind#readme",
   "dependencies": {
-    "express": "^5.1.0",
-    "mongoose": "^8.18.1"
+    "express": "^5.1.0"
   }
 }
