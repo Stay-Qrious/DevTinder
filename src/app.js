@@ -1,33 +1,33 @@
 const express = require("express");
+const connectDB = require("./config/database");
 const app = express();
+const User = require("./models/user");
 
-app.listen(3000, () => { console.log("Server started at port 3000"); });
 
-app.use("/", (err,req, res,next) => {
-  console.log("This is error from home page");
+app.post("/signup", async (req, res) => {
+    const newUser = new User({
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@gmail.com",
+        password: "password123",
+        age: 25, gender: "male"
+    });
+    await newUser.save();
+    console.log("User created");
+    res.send("User created");
+});
+
+
+
+
+connectDB.then(() => {
+    console.log("Database connected successfully");
+    app.listen(3000, () => { console.log("Server started at port 3000"); });
+});
+
+app.use("/", (err, req, res, next) => {
+    res.send("Ran !");
 })
 
-app.use("/admin", (err,req, res,next) => {
-    throw new Error("This is error from admin page");
-    if(err){
-        console.log("This is error from admin page");
-        res.status(500).send("Something broke!");
-    }   
- 
-});
 
-
-app.get("/admin/getData", (req, res) => {
-    res.send("This is absfjkslkjflksjdfklsjdklout page");
-});
-
-app.get("/about/us", (req, res,next) => {
-    console.log("This is khiikhiii us page");
-    res.send("This is about us page");
-    next();
-    console.log("This is about us page");
-},(req, res, next) => {
-    console.log("This is khiikhiii us page - 2");
-    // next();
-});
 
