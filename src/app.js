@@ -8,13 +8,51 @@ const User = require("./models/user");
 app.use(express.json());
 
 
-app.post("/signup", async (req, res) => {
 
+app.get("/feed", async (req, res) => {
+
+    const a = await User.find({});
+    if (a.length === 0) {
+        return res.status(404).send("No user found");
+    }
+    else { res.send(a); }
+});
+
+app.delete("/user", async (req, res) => {
     console.log(req.body);
-    const newUser = new User(req.body);
-    await newUser.save();
-    console.log("User created");
-    res.send("User created!!!");
+    const userId = req.body.userId;
+    const user = await User.findByIdAndDelete(userId);
+    res.send("Deleted user");
+});
+
+app.patch("/user", async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        console.log(req.body);
+        await User.findByIdAndUpdate({ _id: userId }, req.body,{runValidators:true});
+        res.send("User updated");
+    } catch (err) {
+        console.error("Error details:", err.message);
+        res.status(400).send("Error in updating user");
+    }
+});
+
+
+
+
+app.post("/signup", async (req, res) => {
+    console.log("yha aaya tha");
+    try {
+        console.log(req.body);
+        const newUser = new User(req.body);
+        await newUser.save();
+        console.log("User created");
+        res.send("User created!!!");
+    }
+    catch (err) {
+        console.error("Error details:", err.message);
+        res.status(400).send("Error while creating user");
+    }
 });
 
 
