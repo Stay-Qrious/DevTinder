@@ -5,6 +5,7 @@ const User = require("./models/user");
 
 
 
+
 app.use(express.json());
 
 
@@ -30,7 +31,6 @@ app.patch("/user/:userId", async (req, res) => {
     console.log("Update request received");
     try {
         const userId = req.params?.userId;
-        console.log(req.body);
         const allowedUpdates = ["photoUrl", "about", "skills", "age", "gender"];
         const isUpdateAllowed = Object.keys(req.body).every((k) => allowedUpdates.includes(k));
         if (!isUpdateAllowed) { throw new Error("Invalid updates!"); }
