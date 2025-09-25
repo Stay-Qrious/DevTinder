@@ -25,11 +25,16 @@ app.delete("/user", async (req, res) => {
     res.send("Deleted user");
 });
 
-app.patch("/user", async (req, res) => {
+app.patch("/user/:userId", async (req, res) => {
+
+    console.log("Update request received");
     try {
-        const userId = req.body.userId;
+        const userId = req.params?.userId;
         console.log(req.body);
-        await User.findByIdAndUpdate({ _id: userId }, req.body,{runValidators:true});
+        const allowedUpdates = ["photoUrl", "about", "skills", "age", "gender"];
+        const isUpdateAllowed = Object.keys(req.body).every((k) => allowedUpdates.includes(k));
+        if (!isUpdateAllowed) { throw new Error("Invalid updates!"); }
+        await User.findByIdAndUpdate({ _id: userId }, req.body, { runValidators: true });
         res.send("User updated");
     } catch (err) {
         console.error("Error details:", err.message);
