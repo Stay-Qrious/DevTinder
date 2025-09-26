@@ -2,6 +2,8 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
+const { validateSignUpData } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 
 
@@ -42,21 +44,59 @@ app.patch("/user/:userId", async (req, res) => {
     }
 });
 
+app.get("/login", async (req, res) => {
+
+    try{
+        const {email, password} = req.body;
+        const user = await User.findOne({email});
+        if(!user){
+            throw new Error("Invalid Credentials");
+        }
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        if(!isPasswordMatch){
+            throw new Error("Invalid Credentials");
+        }
+        res.send("Login Successful");
+    }
+    catch(err){
+        console.error("Error details:", err.message);
+        res.status(400).send("Error in login: "+err.message);       }
+
+
+});
+
+
 
 
 
 app.post("/signup", async (req, res) => {
-    console.log("yha aaya tha");
     try {
-        console.log(req.body);
-        const newUser = new User(req.body);
+        //validation of data
+        validateSignUpData(req);
+        // encrypt password
+        const passwordHash = await bcrypt.hash(req.body.password, 10);
+        const { firstName, lastName, email, age ,gender, photoUrl, about, skills } = req.body;
+
+        const newUser = new User(
+            {
+                firstName,
+                lastName,
+                email,
+                password: passwordHash,
+                age,
+                gender,
+                photoUrl,
+                about,
+                skills
+            }
+        );
         await newUser.save();
         console.log("User created");
-        res.send("User created!!!");
+        res.send("User created Successfully !!!");
     }
     catch (err) {
         console.error("Error details:", err.message);
-        res.status(400).send("Error while creating user");
+        res.status(400).send("Error while creating user"+err.message);
     }
 });
 
