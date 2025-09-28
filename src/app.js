@@ -5,7 +5,6 @@ const User = require("./models/user");
 const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
 const userAuth = require("./middleware/auth");
 
 
@@ -20,11 +19,11 @@ app.get("/login", async (req, res) => {
         if (!user) {
             throw new Error("Invalid Credentials");
         }
-        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        const isPasswordMatch = await user.checkPassword(password);
         if (!isPasswordMatch) {
             throw new Error("Invalid Credentials");
         }
-        const token = jwt.sign({ _id: user._id }, "Devtinder@123", { expiresIn: '7d' });
+        const token = user.getJWT();
 
         res.cookie("token", token);
         res.send("Login Successful");
