@@ -21,8 +21,8 @@ userSchema.methods.getJWT = function () {
     return token;
 }
 
-userSchema.methods.checkPassword = async function (password) {
-    return await bcrypt.compare(password, this.password);
+userSchema.methods.checkPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
 }
 
 
