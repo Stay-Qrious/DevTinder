@@ -4,70 +4,38 @@ const app = express();
 const User = require("./models/user");
 const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
-
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const userAuth = require("./middleware/auth");
 
 
 
 app.use(express.json());
-
-
-
-app.get("/feed", async (req, res) => {
-
-    const a = await User.find({});
-    if (a.length === 0) {
-        return res.status(404).send("No user found");
-    }
-    else { res.send(a); }
-});
-
-app.delete("/user", async (req, res) => {
-    console.log(req.body);
-    const userId = req.body.userId;
-    const user = await User.findByIdAndDelete(userId);
-    res.send("Deleted user");
-});
-
-app.patch("/user/:userId", async (req, res) => {
-
-    console.log("Update request received");
-    try {
-        const userId = req.params?.userId;
-        const allowedUpdates = ["photoUrl", "about", "skills", "age", "gender"];
-        const isUpdateAllowed = Object.keys(req.body).every((k) => allowedUpdates.includes(k));
-        if (!isUpdateAllowed) { throw new Error("Invalid updates!"); }
-        await User.findByIdAndUpdate({ _id: userId }, req.body, { runValidators: true });
-        res.send("User updated");
-    } catch (err) {
-        console.error("Error details:", err.message);
-        res.status(400).send("Error in updating user");
-    }
-});
-
+app.use(cookieParser());
 app.get("/login", async (req, res) => {
 
-    try{
-        const {email, password} = req.body;
-        const user = await User.findOne({email});
-        if(!user){
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
             throw new Error("Invalid Credentials");
         }
         const isPasswordMatch = await bcrypt.compare(password, user.password);
-        if(!isPasswordMatch){
+        if (!isPasswordMatch) {
             throw new Error("Invalid Credentials");
         }
+        const token = jwt.sign({ _id: user._id }, "Devtinder@123", { expiresIn: '7d' });
+
+        res.cookie("token", token);
         res.send("Login Successful");
     }
-    catch(err){
+    catch (err) {
         console.error("Error details:", err.message);
-        res.status(400).send("Error in login: "+err.message);       }
+        res.status(400).send("Error in login: " + err.message);
+    }
 
 
 });
-
-
-
-
 
 app.post("/signup", async (req, res) => {
     try {
@@ -75,7 +43,7 @@ app.post("/signup", async (req, res) => {
         validateSignUpData(req);
         // encrypt password
         const passwordHash = await bcrypt.hash(req.body.password, 10);
-        const { firstName, lastName, email, age ,gender, photoUrl, about, skills } = req.body;
+        const { firstName, lastName, email, age, gender, photoUrl, about, skills } = req.body;
 
         const newUser = new User(
             {
@@ -96,11 +64,42 @@ app.post("/signup", async (req, res) => {
     }
     catch (err) {
         console.error("Error details:", err.message);
-        res.status(400).send("Error while creating user"+err.message);
+        res.status(400).send("Error while creating user" + err.message);
     }
 });
 
 
+app.get("/profile", userAuth, async (req, res) => {
+    try {
+        const user = req.user;
+        if (!user) {
+            throw new Error("User not found");
+        }
+        res.send("Profile data " + user);
+    } catch (err) {
+        console.error("Error details:", err.message);
+        res.status(400).send("Error in fetching profile");
+    }
+});
+
+
+app.patch("/sendConnectionRequest", userAuth, async (req, res) => {
+    try {
+        if (!req.user) {
+            throw new Error("User not found");
+        }
+        res.send("Connection request sent successfully by the user " + req.user.firstName + " " + req.user.lastName);
+
+
+    } catch (err) {
+        console.error("Error details:", err.message);
+        res.status(400).send("Error in sending connection request");
+    }
+});
+
+app.use("/", (err, req, res, next) => {
+    res.send("Ran !");
+})
 
 
 connectDB.then(() => {
@@ -108,9 +107,7 @@ connectDB.then(() => {
     app.listen(3000, () => { console.log("Server started at port 3000"); });
 });
 
-app.use("/", (err, req, res, next) => {
-    res.send("Ran !");
-})
+
 
 
 
