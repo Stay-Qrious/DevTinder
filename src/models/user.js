@@ -6,10 +6,15 @@ const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema({
     firstName: { type: String, required: true, minLength: 4, maxLength: 30 },
     lastName: String,
-    email: { type: String, required: true, unique: true, trim: true, validate(val) { if (!validator.isEmail(val)) { throw new Error("Email is not valid") } } },
-    password: String,
+    email: { type: String, required: true, unique: true, trim: true },
+    password: { type: String, validator(val) { if (!validator.isStrongPassword(val)) throw new Error("This is not strong Password Baby") } },
     age: { type: Number, min: 18, max: 100 },
-    gender: { type: String, validate(val) { if (!["male", "female", "other"].includes(val)) { throw new Error("Gender is not valid") } } },
+    gender: {
+        type: String, enum: {
+            values: ["male", "female", "chakka"],
+            message: `{VALUE} is not supported`,
+        }
+    },
     photoUrl: { type: String, validate(val) { if (!validator.isURL(val)) { throw new Error("Photo URL is not valid") } } },
     about: { type: String, default: "Hello! I am new here." },
     skills: [String],
