@@ -1,8 +1,8 @@
 const { Schema, model, default: mongoose } = require("mongoose");
 
 const connectionRequestSchema = new Schema({
-    fromUserId: { type: mongoose.Schema.Types.ObjectId, required: true },
-    toUserId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    fromUserId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
+    toUserId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
     status: {
         type: String, enum: {
             values: ["accepted", "rejected", "interested", "ignored"],

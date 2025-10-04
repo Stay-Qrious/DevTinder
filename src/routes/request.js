@@ -71,7 +71,7 @@ requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, r
             return res.status(400).json({ message: "No Request Found !" });
         }
         request.status = status;
-        const data = await request.save();   
+        const data = await request.save();
         res.json({ message: "connection request " + status, data });
 
 

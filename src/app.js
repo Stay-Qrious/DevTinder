@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const { authRouter } = require("./routes/auth");
 const { profileRouter, passwordRouter } = require("./routes/profile");
 const { requestRouter } = require("./routes/request");
+const userRouter = require("./routes/user");
 
 
 
@@ -15,6 +16,7 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", passwordRouter);
+app.use("/", userRouter);
 
 
 
