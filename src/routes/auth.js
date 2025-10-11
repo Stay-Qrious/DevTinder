@@ -13,11 +13,10 @@ authRouter.post("/logout", (req, res) => {
 )
 
 
-authRouter.get("/login", async (req, res) => {
+authRouter.post("/login", async (req, res) => {
 
     try {
         const { email, password } = req.body;
-        console.log(email);
 
         const user = await User.findOne({ email });
 
