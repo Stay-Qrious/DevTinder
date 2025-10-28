@@ -12,10 +12,10 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
         if (!user) {
             throw new Error("User not found");
         }
-        res.send("Profile data " + user);
+        res.json({ message: "Profile fetched successfully", data: user });
     } catch (err) {
         console.error("Error details:", err.message);
-        res.status(400).send("Error in fetching profile");
+        res.status(401).send("Please Login");
     }
 });
 
