@@ -15,7 +15,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
         res.send(user);
     } catch (err) {
         console.error("Error details:", err.message);
-        res.status(400).send("Error in fetching profile");
+        res.status(401).send("Please Login");
     }
 });
 
