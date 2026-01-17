@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
             message: `{VALUE} is not supported`,
         }
     },
-    photoUrl: { type: String, validate(val) { if (!validator.isURL(val)) { throw new Error("Photo URL is not valid") } } },
+    photoUrl: { type: String, default:"https://img.freepik.com/premium-vector/user-profile-icon-circle_1256048-12499.jpg?semt=ais_hybrid&w=740&q=80", validate(val) { if (!validator.isURL(val)) { throw new Error("Photo URL is not valid") } } },
     about: { type: String, default: "Hello! I am new here." },
     skills: [String],
 },

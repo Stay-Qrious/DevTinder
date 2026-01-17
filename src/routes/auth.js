@@ -64,7 +64,10 @@ authRouter.post("/signup", async (req, res) => {
         );
         await newUser.save();
         console.log("User created");
-        res.send("User created Successfully !!!");
+        const token = newUser.getJWT();
+
+        res.cookie("token", token);
+        res.json({ message: "User created successfully" ,data: newUser} );
     }
     catch (err) {
         console.error("Error details:", err.message);
