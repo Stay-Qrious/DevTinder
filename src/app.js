@@ -35,7 +35,10 @@ app.use("/", (err, req, res, next) => {
 
 connectDB.then(() => {
     console.log("Database connected successfully");
-    app.listen(3000, () => { console.log("Server started at port 3000"); });
+   app.listen(3000, "0.0.0.0", () => { 
+  console.log("Server started at port 3000"); 
+});
+
 });
 
 
